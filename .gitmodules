@@ -1,0 +1,3 @@
+[submodule "vendor/uds"]
+	path = vendor/uds
+	url = https://github.com/uael/uds.git
