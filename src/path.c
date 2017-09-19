@@ -31,6 +31,11 @@ typedef fs_path_t __fs_path_t;
 
 VEC_IMPL_ALLOC(__fs_path, i8_t, 16, i8cmp, malloc, realloc, free);
 
+i16_t
+fs_cwd(i8_t *path, u16_t n) {
+  return 0;
+}
+
 fs_path_t *
 fs_path_ctor(fs_path_t *self) {
   __fs_path_ctor(self);
