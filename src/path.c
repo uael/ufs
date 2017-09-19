@@ -27,70 +27,76 @@
 #include <ctype.h>
 #include <ufs.h>
 
-#include "ufs/path.h"
+typedef fs_path_t __fs_path_t;
 
-typedef path_t path_vec_t;
+VEC_IMPL_ALLOC(__fs_path, i8_t, 16, i8cmp, malloc, realloc, free);
 
-VEC_IMPL_ALLOC(path_vec, i8_t, 16, i8cmp, malloc, realloc, free);
-
-path_t *
-fs_path_ctor(path_t *self) {
-  path_vec_ctor(self);
+fs_path_t *
+fs_path_ctor(fs_path_t *self) {
+  __fs_path_ctor(self);
   return self;
 }
 
-path_t *
-fs_path(path_t *self, i8_t const *path) {
-  if (path_vec_append(fs_path_ctor(self), path, strlen(path)) != SUCCESS) {
+fs_path_t *
+fs_path_cwd(fs_path_t *self) {
+  i8_t path[U8_MAX];
+
+  if (fs_cwd(path, U8_MAX)) {
+    return fs_path(self, path);
+  }
+  return nil;
+}
+
+fs_path_t *
+fs_path(fs_path_t *self, i8_t const *path) {
+  if (__fs_path_append(fs_path_ctor(self), (i8_t *) path,
+    (const u16_t) strlen(path)) != SUCCESS) {
     return nil;
   }
   return self;
 }
 
-path_t *
-fs_pathn(path_t *self, i8_t const *path, const u16_t n) {
-  if (path_vec_append(fs_path_ctor(self), (i8_t *) path, n) != SUCCESS) {
+fs_path_t *
+fs_pathn(fs_path_t *self, i8_t const *path, const u16_t n) {
+  if (__fs_path_append(fs_path_ctor(self), (i8_t *) path, n) != SUCCESS) {
     return nil;
   }
   return self;
 }
 
 bool_t
-fs_path_is_abs(path_t const *self) {
+fs_path_is_abs(fs_path_t const *self) {
 #ifdef OS_WIN
-  return self->len > 2
+  return *self->buf == '~' || (self->len > 2
     && isalpha(self->buf[0])
     && self->buf[1] == ':'
-    && self->buf[2] == DS;
+    && self->buf[2] == DS);
 #else
   return *self->buf == DS;
 #endif
 }
 
-/*
 bool_t
-fs_path_is_rel(path_t const *self);
+fs_path_is_rel(fs_path_t const *self) {
+  return !fs_path_is_abs(self);
+}
 
-bool_t
-fs_path_is_root(path_t const *self);
+fs_path_t *
+fs_path_absto(fs_path_t *self, i8_t const *root, fs_path_t *out) {
+  u64_t size;
+  i8_t path[U8_MAX];
 
-bool_t
-fs_path_is_home(path_t const *self);
+  if (fs_path_is_abs(self)) {
+    __fs_path_cpy(out, self);
+    return out;
+  }
+  size = 0;
+  if (!root) {
 
-path_t *
-fs_path_abs(path_t *self, path_t *out);
-
-path_t *
-fs_path_rel(path_t *self, path_t *out);
-
-path_t *
-fs_path_base(path_t *self, path_t *out);
-
-path_t *
-fs_path_ext(path_t *self, path_t *out);
-
-path_t *
-fs_path_dir(path_t *self, path_t *out);
-
-path_t *
-fs_path_join(path_t *self, i8_t const *b, path_t *out);*/
+    if (fs_cwd(path, U8_MAX) < 0) {
+      return nil;
+    }
+    root = path;
+  }
+  __fs_path_append(self, (i8_t *) root, (const u16_t) strlen(root));
+}

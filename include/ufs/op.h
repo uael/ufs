@@ -46,4 +46,7 @@ fs_mv(i8_t const *path, i8_t const *dest);
 __extern_c__ bool_t
 fs_ln(i8_t const *path, i8_t const *dest);
 
+__extern_c__ i16_t
+fs_cwd(i8_t *path, u16_t n);
+
 #endif /* !__UFS_OP_H */

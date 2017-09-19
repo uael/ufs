@@ -39,45 +39,48 @@
 # define DS '/'
 #endif
 
-typedef vecof(i8_t, 16) path_t;
+typedef vecof(i8_t, 16) fs_path_t;
 
-__extern_c__ path_t *
-fs_path_ctor(path_t *self);
+__extern_c__ fs_path_t *
+fs_path_ctor(fs_path_t *self);
 
-__extern_c__ path_t *
-fs_path(path_t *self, i8_t const *path);
+__extern_c__ fs_path_t *
+fs_path_cwd(fs_path_t *self);
 
-__extern_c__ path_t *
-fs_pathn(path_t *self, i8_t const *path, u16_t n);
+__extern_c__ fs_path_t *
+fs_path(fs_path_t *self, i8_t const *path);
 
-__extern_c__ bool_t
-fs_path_is_abs(path_t const *self);
-
-__extern_c__ bool_t
-fs_path_is_rel(path_t const *self);
+__extern_c__ fs_path_t *
+fs_pathn(fs_path_t *self, i8_t const *path, u16_t n);
 
 __extern_c__ bool_t
-fs_path_is_root(path_t const *self);
+fs_path_is_abs(fs_path_t const *self);
 
 __extern_c__ bool_t
-fs_path_is_home(path_t const *self);
+fs_path_is_rel(fs_path_t const *self);
 
-__extern_c__ path_t *
-fs_path_abs(path_t *self, path_t *out);
+__extern_c__ bool_t
+fs_path_is_root(fs_path_t const *self);
 
-__extern_c__ path_t *
-fs_path_rel(path_t *self, path_t *out);
+__extern_c__ bool_t
+fs_path_is_home(fs_path_t const *self);
 
-__extern_c__ path_t *
-fs_path_base(path_t *self, path_t *out);
+__extern_c__ fs_path_t *
+fs_path_abs(fs_path_t *self, fs_path_t *out);
 
-__extern_c__ path_t *
-fs_path_ext(path_t *self, path_t *out);
+__extern_c__ fs_path_t *
+fs_path_rel(fs_path_t *self, fs_path_t *out);
 
-__extern_c__ path_t *
-fs_path_dir(path_t *self, path_t *out);
+__extern_c__ fs_path_t *
+fs_path_base(fs_path_t *self, fs_path_t *out);
 
-__extern_c__ path_t *
-fs_path_join(path_t *self, i8_t const *b, path_t *out);
+__extern_c__ fs_path_t *
+fs_path_ext(fs_path_t *self, fs_path_t *out);
+
+__extern_c__ fs_path_t *
+fs_path_dir(fs_path_t *self, fs_path_t *out);
+
+__extern_c__ fs_path_t *
+fs_path_join(fs_path_t *self, i8_t const *b, fs_path_t *out);
 
 #endif /* !__UFS_PATH_H */
