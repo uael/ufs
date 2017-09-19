@@ -23,58 +23,61 @@
  * SOFTWARE.
  */
 
-/*!@file ufs/file.h
+/*!@file ufs/path.h
  * @author uael
  */
-#ifndef __UFS_FILE_H
-# define __UFS_FILE_H
+#ifndef __UFS_PATH_H
+# define __UFS_PATH_H
 
-#include <uty.h>
-#include <uds/err.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#if defined CC_MSVC
-# include <io.h>
+#include "buf.h"
+
+#ifdef OS_WIN
+# define EOL "\r\n"
+# define DS '\\'
 #else
-# include <unistd.h>
+# define EOL "\n"
+# define DS '/'
 #endif
 
-#include "mod.h"
+typedef vecof(i8_t, 16) path_t;
 
-enum fs_kind {
-  FS_KIND_DIR,
-  FS_KIND_FILE,
-  FS_FILE_DOT,
-  FS8FILE_DOT2
-};
+__extern_c__ path_t *
+fs_path_ctor(path_t *self);
 
-struct fs_file {
-  i32_t dummy;
-};
+__extern_c__ path_t *
+fs_path(path_t *self, i8_t const *path);
 
-typedef enum fs_kind fs_kind_t;
-typedef struct fs_file fs_file_t;
-
-__extern_c__ err_t
-fs_file_open(fs_file_t *self, fs_open_mod_t mod);
-
-__extern_c__ err_t
-fs_file_close(fs_file_t *self);
-
-__extern_c__ err_t
-fs_file_read(fs_file_t *self, i8_t *buf, u64_t len, u64_t *out);
-
-__extern_c__ err_t
-fs_file_write(fs_file_t *self, i8_t const *buf, u64_t len, u64_t *out);
-
-__extern_c__ err_t
-fs_file_seek(fs_file_t *self, i64_t off, fs_seek_mod_t mod, u64_t *out);
+__extern_c__ path_t *
+fs_pathn(path_t *self, i8_t const *path, u16_t n);
 
 __extern_c__ bool_t
-fs_file_sync(fs_file_t *self);
+fs_path_is_abs(path_t const *self);
 
-__extern_c__ i64_t
-fs_file_offset(fs_file_t *self);
+__extern_c__ bool_t
+fs_path_is_rel(path_t const *self);
 
-#endif /* !__UFS_FILE_H */
+__extern_c__ bool_t
+fs_path_is_root(path_t const *self);
+
+__extern_c__ bool_t
+fs_path_is_home(path_t const *self);
+
+__extern_c__ path_t *
+fs_path_abs(path_t *self, path_t *out);
+
+__extern_c__ path_t *
+fs_path_rel(path_t *self, path_t *out);
+
+__extern_c__ path_t *
+fs_path_base(path_t *self, path_t *out);
+
+__extern_c__ path_t *
+fs_path_ext(path_t *self, path_t *out);
+
+__extern_c__ path_t *
+fs_path_dir(path_t *self, path_t *out);
+
+__extern_c__ path_t *
+fs_path_join(path_t *self, i8_t const *b, path_t *out);
+
+#endif /* !__UFS_PATH_H */

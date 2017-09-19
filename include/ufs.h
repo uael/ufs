@@ -31,20 +31,7 @@
 
 #include "ufs/file.h"
 #include "ufs/mod.h"
-
-__extern_c__ bool_t
-fs_cp(i8_t const *path, i8_t const *dest);
-
-__extern_c__ bool_t
-fs_touch(i8_t const *path);
-
-__extern_c__ bool_t
-fs_rm(i8_t const *path);
-
-__extern_c__ bool_t
-fs_mv(i8_t const *path, i8_t const *dest);
-
-__extern_c__ bool_t
-fs_ln(i8_t const *path, i8_t const *dest);
+#include "ufs/op.h"
+#include "ufs/path.h"
 
 #endif /* !__UFS_H */
