@@ -30,7 +30,7 @@
 # define __UFS_FILE_H
 
 #include <uty.h>
-#include <uds/err.h>
+#include <uerr.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -56,19 +56,19 @@ struct fs_file {
 typedef enum fs_kind fs_kind_t;
 typedef struct fs_file fs_file_t;
 
-__extern_c__ err_t
+__extern_c__ ret_t
 fs_file_open(fs_file_t *self, fs_open_mod_t mod);
 
-__extern_c__ err_t
+__extern_c__ ret_t
 fs_file_close(fs_file_t *self);
 
-__extern_c__ err_t
+__extern_c__ ret_t
 fs_file_read(fs_file_t *self, i8_t *buf, u64_t len, u64_t *out);
 
-__extern_c__ err_t
+__extern_c__ ret_t
 fs_file_write(fs_file_t *self, i8_t const *buf, u64_t len, u64_t *out);
 
-__extern_c__ err_t
+__extern_c__ ret_t
 fs_file_seek(fs_file_t *self, i64_t off, fs_seek_mod_t mod, u64_t *out);
 
 __extern_c__ bool_t
