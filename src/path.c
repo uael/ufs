@@ -27,9 +27,12 @@
 #include <ctype.h>
 #include <ufs.h>
 
-typedef fs_path_t __fs_path_t;
-
-VEC_IMPL_ALLOC(__fs_path, i8_t, 16, i8cmp, malloc, realloc, free);
+SEQ_IMPL_dtor(static, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp);
+SEQ_IMPL_realloc(static, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp);
+SEQ_IMPL_ensure(static, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp);
+SEQ_IMPL_grow(static, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp);
+SEQ_IMPL_append(static, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp);
+SEQ_IMPL_cpy(static, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp);
 
 i16_t
 fs_cwd(i8_t *path, u16_t n) {
@@ -38,7 +41,7 @@ fs_cwd(i8_t *path, u16_t n) {
 
 fs_path_t *
 fs_path_ctor(fs_path_t *self) {
-  __fs_path_ctor(self);
+  *self = (fs_path_t){0};
   return self;
 }
 
@@ -54,7 +57,7 @@ fs_path_cwd(fs_path_t *self) {
 
 fs_path_t *
 fs_path(fs_path_t *self, i8_t const *path) {
-  if (__fs_path_append(fs_path_ctor(self), (i8_t *) path,
+  if (fs_path_append(fs_path_ctor(self), (i8_t *) path,
     (const u16_t) strlen(path)) != RET_SUCCESS) {
     return nil;
   }
@@ -63,7 +66,7 @@ fs_path(fs_path_t *self, i8_t const *path) {
 
 fs_path_t *
 fs_pathn(fs_path_t *self, i8_t const *path, const u16_t n) {
-  if (__fs_path_append(fs_path_ctor(self), (i8_t *) path, n) != RET_SUCCESS) {
+  if (fs_path_append(fs_path_ctor(self), (i8_t *) path, n) != RET_SUCCESS) {
     return nil;
   }
   return self;
@@ -92,7 +95,7 @@ fs_path_absto(fs_path_t *self, i8_t const *root, fs_path_t *out) {
   i8_t path[U8_MAX];
 
   if (fs_path_is_abs(self)) {
-    __fs_path_cpy(out, self);
+    fs_path_cpy(out, self);
     return out;
   }
   size = 0;
@@ -103,5 +106,5 @@ fs_path_absto(fs_path_t *self, i8_t const *root, fs_path_t *out) {
     }
     root = path;
   }
-  __fs_path_append(self, (i8_t *) root, (const u16_t) strlen(root));
+  fs_path_append(self, (i8_t *) root, (const u16_t) strlen(root));
 }
