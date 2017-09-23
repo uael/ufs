@@ -35,7 +35,7 @@ enum fs_open_mod {
   FS_OPEN_RW = 1 << 2,
   FS_OPEN_CREAT = 1 << 3,
   FS_OPEN_APPEND = 1 << 4,
-  FS_OPEN_TRUNCATE = 1 << 5,
+  FS_OPEN_TRUNC = 1 << 5,
   FS_OPEN_DIRECT = 1 << 6,
   FS_OPEN_ASIO = 1 << 7
 };

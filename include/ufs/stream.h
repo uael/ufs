@@ -23,14 +23,14 @@
  * SOFTWARE.
  */
 
-/*!@file ufs/buf.h
+/*!@file ufs/stream.h
  * @author uael
  */
-#ifndef __UFS_BUF_H
-# define __UFS_BUF_H
+#ifndef __UFS_STREAM_H
+# define __UFS_STREAM_H
 
 #include <uds.h>
 
-VEC64_DEFINE(fs_buf, i8_t, i8cmp);
 
-#endif /* !__UFS_BUF_H */
+
+#endif /* !__UFS_STREAM_H */

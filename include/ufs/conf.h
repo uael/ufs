@@ -23,17 +23,50 @@
  * SOFTWARE.
  */
 
-/*!@file ufs.h
+/*!@file ufs/conf.h
  * @author uael
  */
-#ifndef __UFS_H
-# define __UFS_H
+#ifndef __UFS_CONF_H
+# define __UFS_CONF_H
 
-#include "ufs/conf.h"
-#include "ufs/file.h"
-#include "ufs/mod.h"
-#include "ufs/op.h"
-#include "ufs/path.h"
-#include "ufs/stream.h"
+#include <uds.h>
+#include <fcntl.h>
 
-#endif /* !__UFS_H */
+#ifdef CC_MSVC
+# include <io.h>
+# include <malloc.h>
+
+# define EOL "\r\n"
+# define DS '\\'
+#else
+# include <unistd.h>
+# include <limits.h>
+# include <dirent.h>
+
+# define EOL "\n"
+# define DS '/'
+#endif
+
+#if defined PATH_MAX
+# define FS_PATH_MAX PATH_MAX
+#elif defined MAX_PATH
+# define FS_PATH_MAX MAX_PATH
+#elif defined _MAX_PATH
+# define FS_PATH_MAX _MAX_PATH
+#elif defined MAXPATHLEN
+# define FS_PATH_MAX MAXPATHLEN
+#else
+# define FS_PATH_MAX (4096)
+#endif
+
+#if defined FILENAME_MAX && (FILENAME_MAX <= U8_MAX)
+# define FS_FILENAME_MAX PATH_MAX
+#elif defined NAME_MAX && (NAME_MAX <= U8_MAX)
+# define FS_FILENAME_MAX (NAME_MAX)
+#elif defined MAXNAMLEN && (MAXNAMLEN <= U8_MAX)
+# define FS_FILENAME_MAX (MAXNAMLEN)
+#else
+# define FS_FILENAME_MAX (U8_MAX)
+#endif
+
+#endif /* !__UFS_CONF_H */

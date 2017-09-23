@@ -23,17 +23,17 @@
  * SOFTWARE.
  */
 
-/*!@file ufs.h
- * @author uael
- */
-#ifndef __UFS_H
-# define __UFS_H
-
-#include "ufs/conf.h"
-#include "ufs/file.h"
-#include "ufs/mod.h"
 #include "ufs/op.h"
-#include "ufs/path.h"
-#include "ufs/stream.h"
 
-#endif /* !__UFS_H */
+FORCEINLINE u16_t
+fs_cwd(i8_t *path, u16_t n) {
+#ifndef CC_MSVC
+  char *ret;
+
+  if ((ret = getcwd(path, n)) == nil)
+    return 0;
+  return (i16_t) strlen(ret);
+#else
+  return (i16_t) GetCurrentDirector((DWORD) n, (LPTSTR) path);
+#endif
+}

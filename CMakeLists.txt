@@ -15,6 +15,7 @@ include(ProjectDependency)
 
 project(ufs C)
 project_dependency(uds GIT_REPOSITORY https://github.com/uael/uds.git)
+project_dependency(unt GIT_REPOSITORY https://github.com/uael/unt.git)
 
 set(ufs_INC_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
 set(ufs_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/src)
@@ -26,7 +27,7 @@ set(ufs_HDR ${ufs_INC_DIR}/ufs.h)
 
 add_library(ufs ${ufs_SRCS} ${ufs_HDRS} ${ufs_HDR})
 target_include_directories(ufs PUBLIC ${ufs_INC_DIR})
-target_link_libraries(ufs PUBLIC uds)
+target_link_libraries(ufs PUBLIC uds unt)
 
 get_directory_property(ufs_PARENT PARENT_DIRECTORY)
 if (NOT ${ufs_PARENT})

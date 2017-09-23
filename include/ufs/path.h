@@ -29,15 +29,7 @@
 #ifndef __UFS_PATH_H
 # define __UFS_PATH_H
 
-#include "buf.h"
-
-#ifdef OS_WIN
-# define EOL "\r\n"
-# define DS '\\'
-#else
-# define EOL "\n"
-# define DS '/'
-#endif
+#include "conf.h"
 
 typedef vecof(i8_t, 16) fs_path_t;
 
@@ -59,28 +51,10 @@ fs_path_is_abs(fs_path_t const *self);
 __extern_c__ bool_t
 fs_path_is_rel(fs_path_t const *self);
 
-__extern_c__ bool_t
-fs_path_is_root(fs_path_t const *self);
-
-__extern_c__ bool_t
-fs_path_is_home(fs_path_t const *self);
-
-__extern_c__ fs_path_t *
+__extern_c__ ret_t
 fs_path_abs(fs_path_t *self, fs_path_t *out);
 
-__extern_c__ fs_path_t *
-fs_path_rel(fs_path_t *self, fs_path_t *out);
-
-__extern_c__ fs_path_t *
-fs_path_base(fs_path_t *self, fs_path_t *out);
-
-__extern_c__ fs_path_t *
-fs_path_ext(fs_path_t *self, fs_path_t *out);
-
-__extern_c__ fs_path_t *
-fs_path_dir(fs_path_t *self, fs_path_t *out);
-
-__extern_c__ fs_path_t *
-fs_path_join(fs_path_t *self, i8_t const *b, fs_path_t *out);
+__extern_c__ ret_t
+fs_path_toabs(fs_path_t *self);
 
 #endif /* !__UFS_PATH_H */

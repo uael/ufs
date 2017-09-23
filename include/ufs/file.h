@@ -29,17 +29,7 @@
 #ifndef __UFS_FILE_H
 # define __UFS_FILE_H
 
-#include <uty.h>
-#include <uerr.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#if defined CC_MSVC
-# include <io.h>
-#else
-# include <unistd.h>
-#endif
-
+#include "conf.h"
 #include "mod.h"
 
 enum fs_kind {
@@ -49,15 +39,26 @@ enum fs_kind {
   FS8FILE_DOT2
 };
 
+typedef enum fs_kind fs_kind_t;
+
 struct fs_file {
-  i32_t dummy;
+#ifdef CC_MSVC
+  HANDLE *fd;
+#else
+  i32_t fd;
+#endif
+  fs_kind_t kind;
+  i32_t flags;
+  i8_t const *filename;
+  i8_t const *path;
+  i8_t const *ext;
+  vecof(i8_t, 16) cache;
 };
 
-typedef enum fs_kind fs_kind_t;
 typedef struct fs_file fs_file_t;
 
 __extern_c__ ret_t
-fs_file_open(fs_file_t *self, fs_open_mod_t mod);
+fs_file_open(fs_file_t *self, i8_t const *filename, fs_open_mod_t mod);
 
 __extern_c__ ret_t
 fs_file_close(fs_file_t *self);

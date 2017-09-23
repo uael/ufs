@@ -29,7 +29,7 @@
 #ifndef __UFS_OP_H
 # define __UFS_OP_H
 
-#include <uty.h>
+#include "conf.h"
 
 __extern_c__ bool_t
 fs_cp(i8_t const *path, i8_t const *dest);
@@ -46,7 +46,7 @@ fs_mv(i8_t const *path, i8_t const *dest);
 __extern_c__ bool_t
 fs_ln(i8_t const *path, i8_t const *dest);
 
-__extern_c__ i16_t
+__extern_c__ u16_t
 fs_cwd(i8_t *path, u16_t n);
 
 #endif /* !__UFS_OP_H */
