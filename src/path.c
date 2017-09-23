@@ -65,7 +65,7 @@ fs_path(fs_path_t *self, i8_t const *path) {
 }
 
 fs_path_t *
-fs_pathn(fs_path_t *self, i8_t const *path, const u16_t n) {
+fs_pathn(fs_path_t *self, i8_t const *path, u16_t n) {
   if (fs_path_append(fs_path_ctor(self), (i8_t *) path, n) != RET_SUCCESS) {
     return nil;
   }
