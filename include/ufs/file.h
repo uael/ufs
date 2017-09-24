@@ -30,6 +30,7 @@
 # define __UFS_FILE_H
 
 #include "conf.h"
+#include "op.h"
 #include "mod.h"
 
 enum fs_kind {

@@ -25,7 +25,7 @@ file(GLOB_RECURSE ufs_SRCS ${ufs_SRCS} ${ufs_SRC_DIR}/*.c)
 file(GLOB_RECURSE ufs_HDRS ${ufs_HDRS} ${ufs_INC_DIR}/ufs/*.h)
 set(ufs_HDR ${ufs_INC_DIR}/ufs.h)
 
-add_library(ufs STATIC ${ufs_SRCS} ${ufs_HDRS} ${ufs_HDR})
+add_library(ufs ${ufs_SRCS} ${ufs_HDRS} ${ufs_HDR})
 target_include_directories(ufs PUBLIC ${ufs_INC_DIR})
 target_link_libraries(ufs PUBLIC uds unt)
 

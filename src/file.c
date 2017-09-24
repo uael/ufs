@@ -29,7 +29,7 @@
 ret_t
 fs_file_open(fs_file_t *self, i8_t const *filename, u32_t flags) {
   ret_t ret;
-  fs_path_t path = init(fs_path_t, 0);
+  fs_path_t path = {0};
 
   if ((ret = fs_path(&path, filename)) > 0
     || (ret = fs_path_absolute(&path, nil)) > 0) {
@@ -59,6 +59,9 @@ fs_file_open(fs_file_t *self, i8_t const *filename, u32_t flags) {
       modes = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
     }
     self->fd = open(self->path, self->flags, modes);
+    if (self->fd < 0) {
+      return RET_ERRNO;
+    }
   }
 #else
   {
@@ -80,8 +83,39 @@ fs_file_open(fs_file_t *self, i8_t const *filename, u32_t flags) {
     attr = FILE_ATTRIBUTE_NORMAL;
     if (flags & FS_OPEN_ASIO) attr |= FILE_FLAG_OVERLAPPED;
     if (flags & FS_OPEN_DIRECT) attr |= FILE_FLAG_NO_BUFFERING;
-    self->fd = CreateFile(self->path, access, share, nil, cflag, attr, nil);
+    self->fd = CreateFile(
+      (LPCSTR) self->path, access, share, nil, cflag, attr, nil
+    );
+    if (self->fd == INVALID_HANDLE_VALUE) {
+      if (flags & FS_OPEN_CREAT) {
+        if ((ret = fs_mkdir(self->path)) > 0) {
+          return ret;
+        }
+        self->fd = CreateFile(
+          (LPCSTR) self->path, access, share, nil, cflag, attr, nil
+        );
+        if (self->fd == INVALID_HANDLE_VALUE) {
+          return RET_ERRNO;
+        }
+      }
+      return RET_ERRNO;
+    }
   }
 #endif
   return RET_SUCCESS;
+}
+
+ret_t
+fs_file_close(fs_file_t *self) {
+#ifdef CC_MSVC
+  if (self->fd == nil || self->fd == INVALID_HANDLE_VALUE) {
+    return RET_FAILURE;
+  }
+  return CloseHandle(self->fd) ? RET_SUCCESS : RET_ERRNO;
+#else
+  if (self->fd <= 0) {
+    return RET_FAILURE;
+  }
+  return close(self->fd) == 0 ? RET_SUCCESS : RET_ERRNO;
+#endif
 }

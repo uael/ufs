@@ -34,7 +34,6 @@
 #include <fcntl.h>
 
 #ifdef CC_MSVC
-# include <io.h>
 # include <malloc.h>
 
 # define EOL "\r\n"
