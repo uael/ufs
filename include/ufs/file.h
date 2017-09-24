@@ -57,25 +57,25 @@ struct fs_file {
 
 typedef struct fs_file fs_file_t;
 
-__extern_c__ ret_t
+__export__ ret_t
 fs_file_open(fs_file_t *self, i8_t const *filename, u32_t flags);
 
-__extern_c__ ret_t
+__export__ ret_t
 fs_file_close(fs_file_t *self);
 
-__extern_c__ ret_t
+__export__ ret_t
 fs_file_read(fs_file_t *self, i8_t *buf, u64_t len, u64_t *out);
 
-__extern_c__ ret_t
+__export__ ret_t
 fs_file_write(fs_file_t *self, i8_t const *buf, u64_t len, u64_t *out);
 
-__extern_c__ ret_t
+__export__ ret_t
 fs_file_seek(fs_file_t *self, i64_t off, fs_seek_mod_t mod, u64_t *out);
 
-__extern_c__ bool_t
+__export__ bool_t
 fs_file_sync(fs_file_t *self);
 
-__extern_c__ i64_t
+__export__ i64_t
 fs_file_offset(fs_file_t *self);
 
 #endif /* !__UFS_FILE_H */

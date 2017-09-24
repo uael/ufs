@@ -61,7 +61,7 @@ SEQ_IMPL_cpy(
 );
 
 void
-fs_path_ctor(fs_path_t *self) {
+fs_path_ctor(fs_path_t *__restrict__ self) {
   *self = (fs_path_t){0};
 }
 
@@ -108,7 +108,7 @@ fs_path_is_abs(fs_path_t const *self) {
   return *self->buf == '~' || (self->len > 2
     && isalpha(self->buf[0])
     && self->buf[1] == ':'
-    && (self->buf[2] == '/' || self->buf[2] == '\\');
+    && (self->buf[2] == '/' || self->buf[2] == '\\'));
 #else
   return *self->buf == '/' || *self->buf == '\\' ||*self->buf == '~';
 #endif

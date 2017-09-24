@@ -29,7 +29,7 @@
 ret_t
 fs_file_open(fs_file_t *self, i8_t const *filename, u32_t flags) {
   ret_t ret;
-  fs_path_t path;
+  fs_path_t path = init(fs_path_t, 0);
 
   if ((ret = fs_path(&path, filename)) > 0
     || (ret = fs_path_absolute(&path, nil)) > 0) {
@@ -68,7 +68,7 @@ fs_file_open(fs_file_t *self, i8_t const *filename, u32_t flags) {
     if (flags & FS_OPEN_RO) access = GENERIC_READ;
     else if (flags & FS_OPEN_WO) access = GENERIC_WRITE;
     else if (flags & FS_OPEN_RW) access = GENERIC_READ | GENERIC_WRITE;
-    DWORD share = FILE_SHARE_READ;
+    share = FILE_SHARE_READ;
     if (flags & FS_OPEN_RO) share = FILE_SHARE_READ;
     else if (flags & FS_OPEN_WO) share = FILE_SHARE_WRITE;
     else if (flags & FS_OPEN_RW) share = FILE_SHARE_READ | FILE_SHARE_WRITE;

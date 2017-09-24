@@ -29,6 +29,7 @@
 #ifndef __UFS_CONF_H
 # define __UFS_CONF_H
 
+#include <unt.h>
 #include <uds.h>
 #include <fcntl.h>
 

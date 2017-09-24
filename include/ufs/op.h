@@ -31,22 +31,22 @@
 
 #include "conf.h"
 
-__extern_c__ bool_t
+__export__ bool_t
 fs_cp(i8_t const *path, i8_t const *dest);
 
-__extern_c__ bool_t
+__export__ bool_t
 fs_touch(i8_t const *path);
 
-__extern_c__ bool_t
+__export__ bool_t
 fs_rm(i8_t const *path);
 
-__extern_c__ bool_t
+__export__ bool_t
 fs_mv(i8_t const *path, i8_t const *dest);
 
-__extern_c__ bool_t
+__export__ bool_t
 fs_ln(i8_t const *path, i8_t const *dest);
 
-__extern_c__ u16_t
+__export__ u16_t
 fs_cwd(i8_t *path, u16_t n);
 
 #endif /* !__UFS_OP_H */

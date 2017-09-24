@@ -34,6 +34,6 @@ fs_cwd(i8_t *path, u16_t n) {
     return 0;
   return (i16_t) strlen(ret);
 #else
-  return (i16_t) GetCurrentDirector((DWORD) n, (LPTSTR) path);
+  return (i16_t) GetCurrentDirectory((DWORD) n, (LPTSTR) path);
 #endif
 }
