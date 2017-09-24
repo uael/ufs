@@ -23,7 +23,6 @@
  * SOFTWARE.
  */
 
-#include <ufs.h>
 #include "ufs/file.h"
 #include "ufs/path.h"
 
@@ -32,7 +31,8 @@ fs_file_open(fs_file_t *self, i8_t const *filename, u32_t flags) {
   ret_t ret;
   fs_path_t path;
 
-  if ((ret = fs_path_toabs(fs_path(&path, filename))) > 0) {
+  if ((ret = fs_path(&path, filename)) > 0
+    || (ret = fs_path_absolute(&path, nil)) > 0) {
     return ret;
   }
   *self = init (fs_file_t,

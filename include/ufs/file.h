@@ -58,7 +58,7 @@ struct fs_file {
 typedef struct fs_file fs_file_t;
 
 __extern_c__ ret_t
-fs_file_open(fs_file_t *self, i8_t const *filename, fs_open_mod_t mod);
+fs_file_open(fs_file_t *self, i8_t const *filename, u32_t flags);
 
 __extern_c__ ret_t
 fs_file_close(fs_file_t *self);
