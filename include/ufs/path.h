@@ -30,6 +30,7 @@
 # define __UFS_PATH_H
 
 #include "conf.h"
+#include "file.h"
 
 typedef vecof(i8_t, 16) fs_path_t;
 
@@ -54,5 +55,11 @@ fs_path_is_rel(fs_path_t const *self);
 
 __export__ ret_t
 fs_path_absolute(fs_path_t *self, fs_path_t *out);
+
+__export__ ret_t
+fs_path_open(fs_path_t *self, fs_file_t *out, u32_t flags);
+
+__export__ ret_t
+fs_path_join(fs_path_t *self, fs_path_t *other);
 
 #endif /* !__UFS_PATH_H */

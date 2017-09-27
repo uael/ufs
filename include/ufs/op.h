@@ -41,7 +41,7 @@ __export__ u16_t
 fs_cwd(i8_t *path, u16_t n);
 
 __export__ bool_t
-fs_exists(i8_t *path);
+fs_exists(i8_t const *path);
 
 __export__ bool_t
 fs_ln(i8_t const *path, i8_t const *dest);

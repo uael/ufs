@@ -42,30 +42,48 @@ enum fs_kind {
 
 typedef enum fs_kind fs_kind_t;
 
-struct fs_file {
-#ifdef CC_MSVC
-  HANDLE *fd;
+#ifdef OS_WIN
+typedef HANDLE *fs_file_hdl_t;
 #else
-  i32_t fd;
+typedef i32_t fs_file_hdl_t;
 #endif
-  fs_kind_t kind;
-  i32_t flags;
+
+struct fs_file {
   i8_t const *filename;
   i8_t const *path;
-  i8_t const *ext;
-  vecof(i8_t, 16) cache;
+  fs_file_hdl_t fd;
+  i32_t flags;
+  fs_kind_t kind;
 };
 
 typedef struct fs_file fs_file_t;
 
 __export__ ret_t
-fs_file_open(fs_file_t *self, i8_t const *filename, u32_t flags);
+fs_file_ctor(fs_file_t *self, i8_t const *filename);
+
+__export__ ret_t
+fs_file_dtor(fs_file_t *self);
+
+__export__ bool_t
+fs_file_exists(fs_file_t *self);
+
+__export__ bool_t
+fs_file_opened(fs_file_t *self);
+
+__export__ ret_t
+fs_file_open(fs_file_t *self, u32_t flags);
 
 __export__ ret_t
 fs_file_close(fs_file_t *self);
 
+__export__ bool_t
+fs_file_rm(fs_file_t *self);
+
+__export__ bool_t
+fs_file_touch(fs_file_t *self);
+
 __export__ ret_t
-fs_file_read(fs_file_t *self, i8_t *buf, u64_t len, u64_t *out);
+fs_file_read(fs_file_t *self, i8_t *buf, u64_t len, i64_t *out);
 
 __export__ ret_t
 fs_file_write(fs_file_t *self, i8_t const *buf, u64_t len, u64_t *out);

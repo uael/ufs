@@ -25,26 +25,26 @@
 
 #include "ufs/op.h"
 
-ret_t
+FORCEINLINE ret_t
 fs_absolute(i8_t const *path, i8_t *out) {
-#ifndef CC_MSVC
+#ifdef OS_WIN
+  if (GetFullPathName((LPCSTR) path, FS_PATH_MAX, (LPSTR) out, nil) == 0) {
+    return RET_ERRNO;
+  }
+#else
   i8_t *ptr;
 
   if ((ptr = realpath(path, out)) == nil) {
     return RET_ERRNO;
   }
   (void) ptr;
-#else
-  if (GetFullPathName((LPCSTR) path, FS_PATH_MAX, (LPSTR) out, nil) == 0) {
-    return RET_ERRNO;
-  }
 #endif
   return RET_SUCCESS;
 }
 
-bool_t
-fs_exists(i8_t *path) {
-#ifdef CC_MSVC
+FORCEINLINE bool_t
+fs_exists(i8_t const *path) {
+#ifdef OS_WIN
   DWORD attributes;
 
   attributes = GetFileAttributes((LPCSTR) path);
@@ -60,22 +60,22 @@ fs_exists(i8_t *path) {
   return false;
 }
 
-u16_t
+FORCEINLINE u16_t
 fs_cwd(i8_t *path, u16_t n) {
-#ifndef CC_MSVC
+#ifdef OS_WIN
+  return (i16_t) GetCurrentDirectory((DWORD) n, (LPTSTR) path);
+#else
   char *ret;
 
   if ((ret = getcwd(path, n)) == nil)
     return 0;
   return (i16_t) strlen(ret);
-#else
-  return (i16_t) GetCurrentDirectory((DWORD) n, (LPTSTR) path);
 #endif
 }
 
-ret_t
+FORCEINLINE ret_t
 fs_mkdir(i8_t const *path) {
-#ifdef CC_MSVC
+#ifdef OS_WIN
   if (!CreateDirectoryA((LPCSTR) path, nil)) {
 #else
   if (mkdir(path, S_IRWXU | S_IRWXG | S_IRWXO) < 0) {
@@ -94,7 +94,7 @@ fs_mkdir(i8_t const *path) {
       *t = *p;
       if (*p == '/') {
         if (!fs_exists(temp)) {
-#ifdef CC_MSVC
+#ifdef OS_WIN
           if (!CreateDirectoryA((LPCSTR) temp, nil)) {
 #else
           if (mkdir(temp, S_IRWXU | S_IRWXG | S_IRWXO) < 0) {
@@ -106,7 +106,7 @@ fs_mkdir(i8_t const *path) {
       }
       else p++;
     }
-#ifdef CC_MSVC
+#ifdef OS_WIN
     if (!CreateDirectoryA((LPCSTR) path, nil)) {
 #else
     if (mkdir(path, S_IRWXU | S_IRWXG | S_IRWXO) < 0) {
@@ -115,4 +115,58 @@ fs_mkdir(i8_t const *path) {
     }
   }
   return RET_SUCCESS;
+}
+
+FORCEINLINE bool_t
+fs_rm(i8_t const *path) {
+#ifdef OS_WIN
+  if (UNLIKELY(DeleteFile((LPCSTR) path) == 0)) {
+#else
+  if (UNLIKELY(unlink(path) != 0)) {
+#endif
+    return false;
+  }
+  return true;
+}
+
+FORCEINLINE bool_t
+fs_touch(i8_t const *path) {
+#ifdef OS_WIN
+  HANDLE *fd;
+
+  fd = CreateFile(
+    (LPCSTR) path, GENERIC_READ, FILE_SHARE_READ, nil,
+    CREATE_ALWAYS | CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nil
+  );
+  if (fd == INVALID_HANDLE_VALUE) {
+    if (fs_mkdir(path) > 0) {
+      return false;
+    }
+    fd = CreateFile(
+      (LPCSTR) path, GENERIC_READ, FILE_SHARE_READ, nil,
+      CREATE_ALWAYS | CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nil
+    );
+    if (fd == INVALID_HANDLE_VALUE) {
+      return false;
+    }
+    return false;
+  }
+  CloseHandle(fd);
+#else
+  i32_t fd;
+
+  fd = open(path, O_RDONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+  if (fd < 0) {
+    if (fs_mkdir(path) > 0) {
+      return false;
+    }
+    fd = open(path, O_RDONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    if (fd < 0) {
+      return false;
+    }
+    return false;
+  }
+  close(fd);
+#endif
+  return true;
 }

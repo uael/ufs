@@ -13,6 +13,9 @@ endif ()
 set(CMAKE_MODULE_PATH "${CMAKE_CACHEFILE_DIR}/cmake")
 include(ProjectDependency)
 
+set(CMAKE_C_STANDARD 99)
+set(BUILD_SHARED_LIBS OFF)
+
 project(ufs C)
 project_dependency(uds GIT_REPOSITORY https://github.com/uael/uds.git)
 project_dependency(unt GIT_REPOSITORY https://github.com/uael/unt.git)
@@ -28,6 +31,23 @@ set(ufs_HDR ${ufs_INC_DIR}/ufs.h)
 add_library(ufs ${ufs_SRCS} ${ufs_HDRS} ${ufs_HDR})
 target_include_directories(ufs PUBLIC ${ufs_INC_DIR})
 target_link_libraries(ufs PUBLIC uds unt)
+
+set(CMAKE_C_FLAGS "")
+set(CMAKE_C_FLAGS_DEBUG "")
+set(CMAKE_C_FLAGS_RELEASE "")
+
+if (MSVC)
+  target_compile_options(ufs
+    PRIVATE /MT$<$<CONFIG:Debug>:d> /Oy
+    PRIVATE /O$<$<CONFIG:Debug>:d>$<$<CONFIG:Release>:x>)
+  set_target_properties(ufs
+    PROPERTIES LINK_FLAGS /nodefaultlib:msvcrt.lib)
+else ()
+  target_compile_options(ufs
+    PRIVATE -Wall -Werror -Wextra -fomit-frame-pointer
+    PRIVATE -Wno-missing-field-initializers
+    PRIVATE -O$<$<CONFIG:Debug>:0 -g3>$<$<CONFIG:Release>:3>)
+endif ()
 
 get_directory_property(ufs_PARENT PARENT_DIRECTORY)
 if (NOT ${ufs_PARENT})

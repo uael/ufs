@@ -32,18 +32,22 @@
 #include <unt.h>
 #include <uds.h>
 #include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
-#ifdef CC_MSVC
-# include <malloc.h>
-
+#ifdef OS_WIN
 # define EOL "\r\n"
-# define DS '\\'
 #else
 # include <unistd.h>
 # include <limits.h>
 # include <dirent.h>
 
 # define EOL "\n"
+#endif
+
+#if defined OS_WIN || defined OS_OS2
+# define DS '\\'
+#else
 # define DS '/'
 #endif
 

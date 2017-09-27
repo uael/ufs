@@ -33,22 +33,15 @@ SEQ_IMPL_realloc(
   static FORCEINLINE, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp
 );
 
-SEQ_DECL_ensure(static, fs_path, i8_t, 16) {
-  if (self->cap < n) {
-    return fs_path_realloc(self, n);
-  }
-  return RET_SUCCESS;
-}
+SEQ_IMPL_ensure_strict(
+  static FORCEINLINE, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp
+);
 
-SEQ_DECL_grow(static, fs_path, i8_t, 16) {
-  n += self->len;
-  if (self->cap < n) {
-    return fs_path_realloc(self, n);
-  }
-  return RET_SUCCESS;
-}
+SEQ_IMPL_grow_strict(
+  static FORCEINLINE, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp
+);
 
-SEQ_IMPL_append(
+SEQ_IMPL_append_nt(
   static FORCEINLINE, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp
 );
 
@@ -56,7 +49,7 @@ SEQ_IMPL_dtor(
   FORCEINLINE, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp
 );
 
-SEQ_IMPL_cpy(
+SEQ_IMPL_cpy_nt(
   FORCEINLINE, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp
 );
 
@@ -71,10 +64,9 @@ fs_path(fs_path_t *self, i8_t const *path) {
 
   fs_path_ctor(self);
   if ((ret = fs_path_append(self, (i8_t *) path,
-    (const u16_t) (strlen(path) + 1))) > 0) {
+    (const u16_t) strlen(path))) > 0) {
     return ret;
   }
-  --self->len;
   return RET_SUCCESS;
 }
 
@@ -83,11 +75,9 @@ fs_pathn(fs_path_t *self, i8_t const *path, u16_t n) {
   ret_t ret;
 
   fs_path_ctor(self);
-  if ((ret = fs_path_append(self, (i8_t *) path,
-    (const u16_t) (n + 1))) > 0) {
+  if ((ret = fs_path_append(self, (i8_t *) path, (const u16_t) n)) > 0) {
     return ret;
   }
-  --self->len;
   return RET_SUCCESS;
 }
 
@@ -123,22 +113,38 @@ ret_t
 fs_path_absolute(fs_path_t *self, fs_path_t *out) {
   i8_t path[FS_PATH_MAX], *ptr;
 
-#ifndef CC_MSVC
+#ifdef OS_WIN
+  if (GetFullPathName(self->buf, FS_PATH_MAX, path, nil) == 0) {
+    return RET_ERRNO;
+  }
+  ptr = path;
+#else
   if ((ptr = realpath(self->buf, path)) == nil) {
     return RET_ERRNO;
   }
-#else
-  if (GetFullPathName(self->buf, FS_PATH_MAX, path, nil) == 0) {
-      return RET_ERRNO;
-    }
-    ptr = path;
 #endif
   if (out != nil) {
-    fs_path(out, ptr);
-  } else {
-    self->len = 0;
-    fs_path_append(self, ptr, (const u16_t) (strlen(ptr) + 1));
-    --self->len;
+    return fs_path(out, ptr);
   }
-  return RET_SUCCESS;
+  self->len = 0;
+  return fs_path_append(self, ptr, (const u16_t) strlen(ptr));
+}
+
+ret_t
+fs_path_open(fs_path_t *self, fs_file_t *out, u32_t flags) {
+  (void) self;
+  (void) out;
+  (void) flags;
+  return RET_FAILURE;
+}
+
+ret_t
+fs_path_join(fs_path_t *self, fs_path_t *other) {
+  ret_t ret;
+
+  if ((ret = fs_path_ensure(self, (u16_t) (other->len + 1))) > 0) {
+    return ret;
+  }
+  self->buf[self->len++] = DS;
+  return fs_path_append(self, other->buf, other->len);
 }

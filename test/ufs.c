@@ -1,20 +1,20 @@
 #include <assert.h>
-#include <ufs.h>
 #include "ufs.h"
 
 i32_t
 main(void) {
-  fs_path_t path = {0};
-  fs_file_t file = {0};
+  fs_file_t *file = new (fs_file_t, nil);
 
-  fs_path_cwd(&path);
-  printf("%s\n", path.buf);
-  fs_file_open(
-    &file,
-    "C:\\Users\\easypara\\work\\jay\\cmake-build-release\\vendor\\ufs\\build\\oops",
-    FS_OPEN_CREAT | FS_OPEN_RO
-  );
-  fs_file_close(&file);
-  fs_path_dtor(&path);
+  fs_file_ctor(file, "LICENSE");
+  if (fs_file_open(file, FS_OPEN_RO) == RET_SUCCESS) {
+    i8_t buf[256];
+    i64_t r;
+
+    while (fs_file_read(file, buf, 256, &r) == RET_SUCCESS) {
+      buf[r] = '\0';
+      printf(buf);
+    }
+  }
+  fs_file_dtor(file);
   return 0;
 }
