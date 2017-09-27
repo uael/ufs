@@ -43,15 +43,15 @@ enum fs_kind {
 typedef enum fs_kind fs_kind_t;
 
 #ifdef OS_WIN
-typedef HANDLE *fs_file_hdl_t;
+typedef HANDLE *fs_file_fd_t;
 #else
-typedef i32_t fs_file_hdl_t;
+typedef i32_t fs_file_fd_t;
 #endif
 
 struct fs_file {
   i8_t const *filename;
   i8_t const *path;
-  fs_file_hdl_t fd;
+  fs_file_fd_t fd;
   i32_t flags;
   fs_kind_t kind;
 };
@@ -89,7 +89,7 @@ __export__ ret_t
 fs_file_write(fs_file_t *self, i8_t const *buf, u64_t len, u64_t *out);
 
 __export__ ret_t
-fs_file_seek(fs_file_t *self, i64_t off, fs_seek_mod_t mod, u64_t *out);
+fs_file_seek(fs_file_t *self, i64_t off, fs_seek_mod_t whence, u64_t *out);
 
 __export__ bool_t
 fs_file_sync(fs_file_t *self);

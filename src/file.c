@@ -167,7 +167,7 @@ fs_file_close(fs_file_t *self) {
   return ret;
 }
 
-bool_t
+FORCEINLINE bool_t
 fs_file_rm(fs_file_t *self) {
   if (fs_file_opened(self)) {
     fs_file_close(self);
@@ -175,7 +175,7 @@ fs_file_rm(fs_file_t *self) {
   return fs_rm(self->path);
 }
 
-bool_t
+FORCEINLINE bool_t
 fs_file_touch(fs_file_t *self) {
   if (fs_file_opened(self)) {
     return true;
@@ -191,7 +191,7 @@ fs_file_read(fs_file_t *self, i8_t *buf, u64_t len, i64_t *out) {
     return RET_FAILURE;
   }
 #ifdef OS_WIN
-  if (!ReadFile(self->fd, buf, (DWORD) len, &r, nil)) {
+  if (!ReadFile(self->fd, buf, (DWORD) len - 1, (LPDWORD) &r, nil)) {
     return RET_ERRNO;
   }
 #else
@@ -203,5 +203,53 @@ fs_file_read(fs_file_t *self, i8_t *buf, u64_t len, i64_t *out) {
     return RET_FAILURE;
   }
   *out = r;
+  return RET_SUCCESS;
+}
+
+FORCEINLINE ret_t
+fs_file_write(fs_file_t *self, i8_t const *buf, u64_t len, u64_t *out) {
+  i64_t r;
+
+  if (!fs_file_opened(self)) {
+    return RET_FAILURE;
+  }
+#ifdef OS_WIN
+  if (!WriteFile(self->fd, buf, (DWORD) len - 1, (LPDWORD) &r, nil)) {
+    return RET_ERRNO;
+  }
+#else
+  if ((r = write(self->fd, buf, (size_t) len)) < 0) {
+    return RET_ERRNO;
+  }
+#endif
+  if (r == 0) {
+    return RET_FAILURE;
+  }
+  *out = (u64_t) r;
+  return RET_SUCCESS;
+}
+
+FORCEINLINE ret_t
+fs_file_seek(fs_file_t *self, i64_t off, fs_seek_mod_t whence, u64_t *out) {
+#ifdef OS_WIN
+  LARGE_INTEGER li_off;
+  
+  li_off.QuadPart = off;
+  if (SetFilePointerEx(self->fd, li_off, &li_off, whence) != 0) {
+    return RET_FAILURE;
+  }
+  if (out != nil) {
+    *out = li_off.QuadPart;
+  }
+#else
+  i64_t r;
+
+  if ((r = lseek(self->fd, off, whence)) < 0) {
+    return errno != 0 ? RET_ERRNO : RET_FAILURE;
+  }
+  if (out != nil) {
+    *out = (u64_t) r;
+  }
+#endif
   return RET_SUCCESS;
 }
