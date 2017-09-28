@@ -45,6 +45,10 @@ SEQ_IMPL_append_nt(
   static FORCEINLINE, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp
 );
 
+SEQ_IMPL_nappend(
+  static FORCEINLINE, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp
+);
+
 SEQ_IMPL_dtor(
   FORCEINLINE, fs_path, i8_t, 16, cap, len, buf, realloc, free, i8cmp
 );
@@ -63,8 +67,7 @@ fs_path(fs_path_t *self, i8_t const *path) {
   ret_t ret;
 
   fs_path_ctor(self);
-  if ((ret = fs_path_append(self, (i8_t *) path,
-    (const u16_t) strlen(path))) > 0) {
+  if ((ret = fs_path_append(self, (i8_t *) path)) > 0) {
     return ret;
   }
   return RET_SUCCESS;
@@ -75,7 +78,7 @@ fs_pathn(fs_path_t *self, i8_t const *path, u16_t n) {
   ret_t ret;
 
   fs_path_ctor(self);
-  if ((ret = fs_path_append(self, (i8_t *) path, (const u16_t) n)) > 0) {
+  if ((ret = fs_path_nappend(self, (i8_t *) path, (const u16_t) n)) > 0) {
     return ret;
   }
   return RET_SUCCESS;
@@ -127,7 +130,7 @@ fs_path_absolute(fs_path_t *self, fs_path_t *out) {
     return fs_path(out, ptr);
   }
   self->len = 0;
-  return fs_path_append(self, ptr, (const u16_t) strlen(ptr));
+  return fs_path_append(self, ptr);
 }
 
 ret_t
@@ -146,5 +149,5 @@ fs_path_join(fs_path_t *self, fs_path_t *other) {
     return ret;
   }
   self->buf[self->len++] = DS;
-  return fs_path_append(self, other->buf, other->len);
+  return fs_path_nappend(self, other->buf, other->len);
 }

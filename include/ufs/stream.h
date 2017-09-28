@@ -29,8 +29,13 @@
 #ifndef __UFS_STREAM_H
 # define __UFS_STREAM_H
 
-#include <uds.h>
+#include "file.h"
 
+typedef struct fs_stream fs_stream_t;
 
+struct fs_stream {
+  fs_file_t file;
+  vecof(i8_t, 64) cache;
+};
 
 #endif /* !__UFS_STREAM_H */

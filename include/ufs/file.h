@@ -86,13 +86,10 @@ __export__ ret_t
 fs_file_read(fs_file_t *self, i8_t *buf, u64_t len, i64_t *out);
 
 __export__ ret_t
-fs_file_write(fs_file_t *self, i8_t const *buf, u64_t len, u64_t *out);
+fs_file_write(fs_file_t *self, i8_t const *buf, u64_t len, i64_t *out);
 
 __export__ ret_t
-fs_file_seek(fs_file_t *self, i64_t off, fs_seek_mod_t whence, u64_t *out);
-
-__export__ bool_t
-fs_file_sync(fs_file_t *self);
+fs_file_seek(fs_file_t *self, i64_t off, fs_seek_mod_t whence, i64_t *out);
 
 __export__ i64_t
 fs_file_offset(fs_file_t *self);

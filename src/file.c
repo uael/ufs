@@ -207,14 +207,14 @@ fs_file_read(fs_file_t *self, i8_t *buf, u64_t len, i64_t *out) {
 }
 
 FORCEINLINE ret_t
-fs_file_write(fs_file_t *self, i8_t const *buf, u64_t len, u64_t *out) {
+fs_file_write(fs_file_t *self, i8_t const *buf, u64_t len, i64_t *out) {
   i64_t r;
 
   if (!fs_file_opened(self)) {
     return RET_FAILURE;
   }
 #ifdef OS_WIN
-  if (!WriteFile(self->fd, buf, (DWORD) len - 1, (LPDWORD) &r, nil)) {
+  if (!WriteFile(self->fd, (LPCVOID) buf, (DWORD) len - 1, (LPDWORD) &r, nil)) {
     return RET_ERRNO;
   }
 #else
@@ -230,7 +230,7 @@ fs_file_write(fs_file_t *self, i8_t const *buf, u64_t len, u64_t *out) {
 }
 
 FORCEINLINE ret_t
-fs_file_seek(fs_file_t *self, i64_t off, fs_seek_mod_t whence, u64_t *out) {
+fs_file_seek(fs_file_t *self, i64_t off, fs_seek_mod_t whence, i64_t *out) {
 #ifdef OS_WIN
   LARGE_INTEGER li_off;
   
@@ -248,8 +248,23 @@ fs_file_seek(fs_file_t *self, i64_t off, fs_seek_mod_t whence, u64_t *out) {
     return errno != 0 ? RET_ERRNO : RET_FAILURE;
   }
   if (out != nil) {
-    *out = (u64_t) r;
+    *out = r;
   }
 #endif
   return RET_SUCCESS;
+}
+
+i64_t
+fs_file_offset(fs_file_t *self) {
+  i64_t off;
+
+  switch (fs_file_seek(self, 0, FS_SEEK_CUR, &off)) {
+    case RET_SUCCESS:
+      return off;
+    case RET_FAILURE:
+      return 0;
+    default:
+    case RET_ERRNO:
+      return -1;
+  }
 }
