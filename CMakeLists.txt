@@ -41,7 +41,7 @@ if (MSVC)
     PRIVATE /O$<$<CONFIG:Debug>:d>$<$<CONFIG:Release>:x>)
 else ()
   target_compile_options(ufs
-    PRIVATE -Wall -Werror -Wextra -fomit-frame-pointer
+    PRIVATE -Wall -Werror -Wextra -fomit-frame-pointer -ansi
     PRIVATE -Wno-missing-field-initializers
     PRIVATE -O$<$<CONFIG:Debug>:0 -g3>$<$<CONFIG:Release>:3>)
 endif ()

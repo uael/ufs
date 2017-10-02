@@ -31,31 +31,31 @@
 
 SEQ_IMPL_realloc(
   static FORCEINLINE, fs_path, char_t, 16, cap, len, buf, realloc, free, i8cmp
-);
+)
 
 SEQ_IMPL_ensure_strict(
   static FORCEINLINE, fs_path, char_t, 16, cap, len, buf, realloc, free, i8cmp
-);
+)
 
 SEQ_IMPL_grow_strict(
   static FORCEINLINE, fs_path, char_t, 16, cap, len, buf, realloc, free, i8cmp
-);
+)
 
 SEQ_IMPL_append_nt(
   static FORCEINLINE, fs_path, char_t, 16, cap, len, buf, realloc, free, i8cmp
-);
+)
 
 SEQ_IMPL_nappend(
   static FORCEINLINE, fs_path, char_t, 16, cap, len, buf, realloc, free, i8cmp
-);
+)
 
 SEQ_IMPL_dtor(
   FORCEINLINE, fs_path, char_t, 16, cap, len, buf, realloc, free, i8cmp
-);
+)
 
 SEQ_IMPL_cpy_nt(
   FORCEINLINE, fs_path, char_t, 16, cap, len, buf, realloc, free, i8cmp
-);
+)
 
 void
 fs_path_ctor(fs_path_t *__restrict__ self) {
