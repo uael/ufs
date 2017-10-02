@@ -36,9 +36,10 @@ set(CMAKE_C_FLAGS "")
 set(CMAKE_C_FLAGS_DEBUG "")
 set(CMAKE_C_FLAGS_RELEASE "")
 
+target_compile_definitions(ufs $<$<CONFIG:Release>:N>DEBUG)
 if (MSVC)
   target_compile_options(ufs
-    PRIVATE /MT$<$<CONFIG:Debug>:d> /Oy
+    PRIVATE /MT$<$<CONFIG:Debug>:d> /Oy /clr
     PRIVATE /O$<$<CONFIG:Debug>:d>$<$<CONFIG:Release>:x>)
   set_target_properties(ufs
     PROPERTIES LINK_FLAGS /nodefaultlib:msvcrt.lib)

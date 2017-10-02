@@ -31,15 +31,18 @@
 
 #include <unt.h>
 #include <uds.h>
+
 #include <fcntl.h>
+#include <limits.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
 #ifdef OS_WIN
+# include <io.h>
+
 # define EOL "\r\n"
 #else
 # include <unistd.h>
-# include <limits.h>
 # include <dirent.h>
 
 # define EOL "\n"
