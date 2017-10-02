@@ -18,7 +18,6 @@ set(BUILD_SHARED_LIBS OFF)
 
 project(ufs C)
 project_dependency(uds GIT_REPOSITORY https://github.com/uael/uds.git)
-project_dependency(unt GIT_REPOSITORY https://github.com/uael/unt.git)
 
 set(ufs_INC_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
 set(ufs_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/src)
@@ -30,19 +29,16 @@ set(ufs_HDR ${ufs_INC_DIR}/ufs.h)
 
 add_library(ufs ${ufs_SRCS} ${ufs_HDRS} ${ufs_HDR})
 target_include_directories(ufs PUBLIC ${ufs_INC_DIR})
-target_link_libraries(ufs PUBLIC uds unt)
+target_link_libraries(ufs PUBLIC uds)
 
 set(CMAKE_C_FLAGS "")
 set(CMAKE_C_FLAGS_DEBUG "")
 set(CMAKE_C_FLAGS_RELEASE "")
 
-target_compile_definitions(ufs $<$<CONFIG:Release>:N>DEBUG)
 if (MSVC)
   target_compile_options(ufs
-    PRIVATE /MT$<$<CONFIG:Debug>:d> /Oy /clr
+    PRIVATE /MT$<$<CONFIG:Debug>:d> /Oy /Za
     PRIVATE /O$<$<CONFIG:Debug>:d>$<$<CONFIG:Release>:x>)
-  set_target_properties(ufs
-    PROPERTIES LINK_FLAGS /nodefaultlib:msvcrt.lib)
 else ()
   target_compile_options(ufs
     PRIVATE -Wall -Werror -Wextra -fomit-frame-pointer

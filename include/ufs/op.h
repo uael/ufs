@@ -32,30 +32,30 @@
 #include "conf.h"
 
 __export__ ret_t
-fs_absolute(i8_t const *path, i8_t *out);
+fs_absolute(char_t const *path, char_t *out);
 
 __export__ bool_t
-fs_cp(i8_t const *path, i8_t const *dest);
+fs_cp(char_t const *path, char_t const *dest);
 
 __export__ u16_t
-fs_cwd(i8_t *path, u16_t n);
+fs_cwd(char_t *path, u16_t n);
 
 __export__ bool_t
-fs_exists(i8_t const *path);
+fs_exists(char_t const *path);
 
 __export__ bool_t
-fs_ln(i8_t const *path, i8_t const *dest);
+fs_ln(char_t const *path, char_t const *dest);
 
 __export__ ret_t
-fs_mkdir(i8_t const *path);
+fs_mkdir(char_t const *path);
 
 __export__ bool_t
-fs_mv(i8_t const *path, i8_t const *dest);
+fs_mv(char_t const *path, char_t const *dest);
 
 __export__ bool_t
-fs_rm(i8_t const *path);
+fs_rm(char_t const *path);
 
 __export__ bool_t
-fs_touch(i8_t const *path);
+fs_touch(char_t const *path);
 
 #endif /* !__UFS_OP_H */

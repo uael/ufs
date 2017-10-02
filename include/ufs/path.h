@@ -32,20 +32,20 @@
 #include "conf.h"
 #include "file.h"
 
-typedef vecof(i8_t, 16) fs_path_t;
+typedef vecof(char_t, 16) fs_path_t;
 
-SEQ_DECL_ctor(__export__, fs_path, i8_t, 16);
-SEQ_DECL_dtor(__export__, fs_path, i8_t, 16);
-SEQ_DECL_cpy(__export__, fs_path, i8_t, 16);
+SEQ_DECL_ctor(__export__, fs_path, char_t, 16);
+SEQ_DECL_dtor(__export__, fs_path, char_t, 16);
+SEQ_DECL_cpy(__export__, fs_path, char_t, 16);
 
 __export__ ret_t
 fs_path_cwd(fs_path_t *self);
 
 __export__ ret_t
-fs_path(fs_path_t *self, i8_t const *path);
+fs_path(fs_path_t *self, char_t const *path);
 
 __export__ ret_t
-fs_pathn(fs_path_t *self, i8_t const *path, u16_t n);
+fs_pathn(fs_path_t *self, char_t const *path, u16_t n);
 
 __export__ bool_t
 fs_path_is_abs(fs_path_t const *self);

@@ -29,29 +29,22 @@
 #ifndef __UFS_CONF_H
 # define __UFS_CONF_H
 
-#include <unt.h>
 #include <uds.h>
 
-#include <fcntl.h>
-#include <limits.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#ifdef OS_WIN
-# include <io.h>
-
-# define EOL "\r\n"
-#else
-# include <unistd.h>
-# include <dirent.h>
-
-# define EOL "\n"
+#ifndef EOL
+# ifdef OS_WIN
+#   define EOL "\r\n"
+# else
+#   define EOL "\n"
+# endif
 #endif
 
-#if defined OS_WIN || defined OS_OS2
-# define DS '\\'
-#else
-# define DS '/'
+#ifndef DS
+# if defined OS_WIN || defined OS_OS2
+#   define DS '\\'
+# else
+#   define DS '/'
+# endif
 #endif
 
 #if defined PATH_MAX

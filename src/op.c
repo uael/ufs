@@ -24,15 +24,16 @@
  */
 
 #include "ufs/op.h"
+#include "ufs/file.h"
 
 FORCEINLINE ret_t
-fs_absolute(i8_t const *path, i8_t *out) {
+fs_absolute(char_t const *path, char_t *out) {
 #ifdef OS_WIN
-  if (GetFullPathName((LPCSTR) path, FS_PATH_MAX, (LPSTR) out, nil) == 0) {
+  if (_fullpath(out, path, FS_PATH_MAX) == nil) {
     return RET_ERRNO;
   }
 #else
-  i8_t *ptr;
+  char_t *ptr;
 
   if ((ptr = realpath(path, out)) == nil) {
     return RET_ERRNO;
@@ -43,46 +44,40 @@ fs_absolute(i8_t const *path, i8_t *out) {
 }
 
 FORCEINLINE bool_t
-fs_exists(i8_t const *path) {
+fs_exists(char_t const *path) {
 #ifdef OS_WIN
-  DWORD attributes;
-
-  attributes = GetFileAttributes((LPCSTR) path);
-  if (attributes == INVALID_FILE_ATTRIBUTES) {
-    return (bool_t) (GetLastError() == ERROR_BAD_NETPATH);
-  }
-  return true;
+  if (_access(path, 00) == 0) {
 #else
   if (access(path, F_OK) == 0) {
+#endif
     return true;
   }
-#endif
   return false;
 }
 
 FORCEINLINE u16_t
-fs_cwd(i8_t *path, u16_t n) {
-#ifdef OS_WIN
-  return (i16_t) GetCurrentDirectory((DWORD) n, (LPTSTR) path);
-#else
+fs_cwd(char_t *path, u16_t n) {
   char *ret;
 
+#ifdef OS_WIN
+  if ((ret = _getcwd(path, n)) == nil)
+#else
   if ((ret = getcwd(path, n)) == nil)
+#endif
     return 0;
   return (i16_t) strlen(ret);
-#endif
 }
 
 FORCEINLINE ret_t
-fs_mkdir(i8_t const *path) {
+fs_mkdir(char_t const *path) {
 #ifdef OS_WIN
-  if (!CreateDirectoryA((LPCSTR) path, nil)) {
+  if (_mkdir(path) < 0) {
 #else
   if (mkdir(path, S_IRWXU | S_IRWXG | S_IRWXO) < 0) {
 #endif
     ret_t ret;
-    i8_t *t, full[FS_PATH_MAX], temp[FS_PATH_MAX] = {0};
-    i8_t const* p, *e;
+    char_t *t, full[FS_PATH_MAX], temp[FS_PATH_MAX] = {0};
+    char_t const *p, *e;
 
     if ((ret = fs_absolute(path, full)) > 0) {
       return ret;
@@ -95,19 +90,19 @@ fs_mkdir(i8_t const *path) {
       if (*p == '/') {
         if (!fs_exists(temp)) {
 #ifdef OS_WIN
-          if (!CreateDirectoryA((LPCSTR) temp, nil)) {
+          if (_mkdir(temp) < 0) {
 #else
           if (mkdir(temp, S_IRWXU | S_IRWXG | S_IRWXO) < 0) {
 #endif
             return RET_ERRNO;
           }
         }
-        while (*p && *p == '/') p++;
+        while (*p == '/') p++;
       }
       else p++;
     }
 #ifdef OS_WIN
-    if (!CreateDirectoryA((LPCSTR) path, nil)) {
+    if (_mkdir(path) < 0) {
 #else
     if (mkdir(path, S_IRWXU | S_IRWXG | S_IRWXO) < 0) {
 #endif
@@ -118,9 +113,9 @@ fs_mkdir(i8_t const *path) {
 }
 
 FORCEINLINE bool_t
-fs_rm(i8_t const *path) {
+fs_rm(char_t const *path) {
 #ifdef OS_WIN
-  if (UNLIKELY(DeleteFile((LPCSTR) path) == 0)) {
+  if (UNLIKELY(_unlink(path) != 0)) {
 #else
   if (UNLIKELY(unlink(path) != 0)) {
 #endif
@@ -130,43 +125,18 @@ fs_rm(i8_t const *path) {
 }
 
 FORCEINLINE bool_t
-fs_touch(i8_t const *path) {
-#ifdef OS_WIN
-  HANDLE *fd;
-
-  fd = CreateFile(
-    (LPCSTR) path, GENERIC_READ, FILE_SHARE_READ, nil,
-    CREATE_ALWAYS | CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nil
-  );
-  if (fd == INVALID_HANDLE_VALUE) {
-    if (fs_mkdir(path) > 0) {
-      return false;
-    }
-    fd = CreateFile(
-      (LPCSTR) path, GENERIC_READ, FILE_SHARE_READ, nil,
-      CREATE_ALWAYS | CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nil
-    );
-    if (fd == INVALID_HANDLE_VALUE) {
-      return false;
-    }
-    return false;
-  }
-  CloseHandle(fd);
-#else
+fs_touch(char_t const *path) {
   i32_t fd;
 
-  fd = open(path, O_RDONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-  if (fd < 0) {
+  if (fs_file_open(&fd, path, FS_OPEN_RO | FS_OPEN_CREAT) == RET_ERRNO) {
     if (fs_mkdir(path) > 0) {
       return false;
     }
-    fd = open(path, O_RDONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-    if (fd < 0) {
+    if (fs_file_open(&fd, path, FS_OPEN_RO | FS_OPEN_CREAT) == RET_ERRNO) {
       return false;
     }
     return false;
   }
-  close(fd);
-#endif
+  fs_file_close(&fd);
   return true;
 }

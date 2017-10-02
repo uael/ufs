@@ -33,6 +33,8 @@
 #include "op.h"
 #include "mod.h"
 
+#define FS_FD_DFT (-1)
+
 enum fs_kind {
   FS_KIND_DIR,
   FS_KIND_FILE,
@@ -41,57 +43,33 @@ enum fs_kind {
 };
 
 typedef enum fs_kind fs_kind_t;
-
-#ifdef OS_WIN
-typedef HANDLE *fs_file_fd_t;
-#else
-typedef i32_t fs_file_fd_t;
-#endif
-
-struct fs_file {
-  i8_t const *filename;
-  i8_t const *path;
-  fs_file_fd_t fd;
-  i32_t flags;
-  fs_kind_t kind;
-};
-
-typedef struct fs_file fs_file_t;
-
-__export__ ret_t
-fs_file_ctor(fs_file_t *self, i8_t const *filename);
-
-__export__ ret_t
-fs_file_dtor(fs_file_t *self);
+typedef i32_t fs_file_t;
 
 __export__ bool_t
-fs_file_exists(fs_file_t *self);
+fs_file_exists(fs_file_t *__restrict__ self);
 
 __export__ bool_t
-fs_file_opened(fs_file_t *self);
+fs_file_opened(fs_file_t const *__restrict__ self);
 
 __export__ ret_t
-fs_file_open(fs_file_t *self, u32_t flags);
+fs_file_open(fs_file_t *__restrict__ self, char_t const *filename, u32_t flags);
 
 __export__ ret_t
-fs_file_close(fs_file_t *self);
-
-__export__ bool_t
-fs_file_rm(fs_file_t *self);
-
-__export__ bool_t
-fs_file_touch(fs_file_t *self);
+fs_file_close(fs_file_t *__restrict__ self);
 
 __export__ ret_t
-fs_file_read(fs_file_t *self, i8_t *buf, u64_t len, i64_t *out);
+fs_file_read(fs_file_t *__restrict__ self, char_t *buf, usize_t len,
+  isize_t *out);
 
 __export__ ret_t
-fs_file_write(fs_file_t *self, i8_t const *buf, u64_t len, i64_t *out);
+fs_file_write(fs_file_t *__restrict__ self, char_t const *buf, usize_t len,
+  isize_t *out);
 
 __export__ ret_t
-fs_file_seek(fs_file_t *self, i64_t off, fs_seek_mod_t whence, i64_t *out);
+fs_file_seek(fs_file_t *__restrict__ self, isize_t off, fs_seek_mod_t whence,
+  isize_t *out);
 
-__export__ i64_t
-fs_file_offset(fs_file_t *self);
+__export__ isize_t
+fs_file_offset(fs_file_t *__restrict__ self);
 
 #endif /* !__UFS_FILE_H */
