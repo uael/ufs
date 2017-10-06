@@ -27,7 +27,7 @@
 #include "ufs/file.h"
 
 FORCEINLINE ret_t
-fs_absolute(char_t const *path, char_t *out) {
+fs_absolute(char_t __const *path, char_t *out) {
 #ifdef OS_WIN
   if (_fullpath(out, path, FS_PATH_MAX) == nil) {
     return RET_ERRNO;
@@ -44,7 +44,7 @@ fs_absolute(char_t const *path, char_t *out) {
 }
 
 FORCEINLINE bool_t
-fs_exists(char_t const *path) {
+fs_exists(char_t __const *path) {
 #ifdef OS_WIN
   if (_access(path, 00) == 0) {
 #else
@@ -69,7 +69,7 @@ fs_cwd(char_t *path, u16_t n) {
 }
 
 FORCEINLINE ret_t
-fs_mkdir(char_t const *path) {
+fs_mkdir(char_t __const *path) {
 #ifdef OS_WIN
   if (_mkdir(path) < 0) {
 #else
@@ -77,7 +77,7 @@ fs_mkdir(char_t const *path) {
 #endif
     ret_t ret;
     char_t *t, full[FS_PATH_MAX], temp[FS_PATH_MAX] = {0};
-    char_t const *p, *e;
+    char_t __const *p, *e;
 
     if ((ret = fs_absolute(path, full)) > 0) {
       return ret;
@@ -113,7 +113,7 @@ fs_mkdir(char_t const *path) {
 }
 
 FORCEINLINE bool_t
-fs_rm(char_t const *path) {
+fs_rm(char_t __const *path) {
 #ifdef OS_WIN
   if (UNLIKELY(_unlink(path) != 0)) {
 #else
@@ -125,7 +125,7 @@ fs_rm(char_t const *path) {
 }
 
 FORCEINLINE bool_t
-fs_touch(char_t const *path) {
+fs_touch(char_t __const *path) {
   i32_t fd;
 
   if (fs_file_open(&fd, path, FS_OPEN_RO | FS_OPEN_CREAT) == RET_ERRNO) {

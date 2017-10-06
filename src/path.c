@@ -58,12 +58,12 @@ SEQ_IMPL_cpy_nt(
 )
 
 void
-fs_path_ctor(fs_path_t *__restrict__ self) {
+fs_path_ctor(fs_path_t *__restrict self) {
   *self = (fs_path_t){0};
 }
 
 ret_t
-fs_path(fs_path_t *self, char_t const *path) {
+fs_path(fs_path_t *self, char_t __const *path) {
   ret_t ret;
 
   fs_path_ctor(self);
@@ -74,11 +74,11 @@ fs_path(fs_path_t *self, char_t const *path) {
 }
 
 ret_t
-fs_pathn(fs_path_t *self, char_t const *path, u16_t n) {
+fs_pathn(fs_path_t *self, char_t __const *path, u16_t n) {
   ret_t ret;
 
   fs_path_ctor(self);
-  if ((ret = fs_path_nappend(self, (char_t *) path, (const u16_t) n)) > 0) {
+  if ((ret = fs_path_nappend(self, (char_t *) path, (__const u16_t) n)) > 0) {
     return ret;
   }
   return RET_SUCCESS;
@@ -96,7 +96,7 @@ fs_path_cwd(fs_path_t *self) {
 }
 
 bool_t
-fs_path_is_abs(fs_path_t const *self) {
+fs_path_is_abs(fs_path_t __const *self) {
 #ifdef OS_WIN
   return *self->buf == '~' || (self->len > 2
     && isalpha(self->buf[0])
@@ -108,7 +108,7 @@ fs_path_is_abs(fs_path_t const *self) {
 }
 
 bool_t
-fs_path_is_rel(fs_path_t const *self) {
+fs_path_is_rel(fs_path_t __const *self) {
   return !fs_path_is_abs(self);
 }
 

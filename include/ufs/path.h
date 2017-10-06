@@ -34,32 +34,32 @@
 
 typedef vecof(char_t, 16) fs_path_t;
 
-SEQ_DECL_ctor(__export__, fs_path, char_t, 16);
-SEQ_DECL_dtor(__export__, fs_path, char_t, 16);
-SEQ_DECL_cpy(__export__, fs_path, char_t, 16);
+SEQ_DECL_ctor(__api__, fs_path, char_t, 16);
+SEQ_DECL_dtor(__api__, fs_path, char_t, 16);
+SEQ_DECL_cpy(__api__, fs_path, char_t, 16);
 
-__export__ ret_t
+__api__ ret_t
 fs_path_cwd(fs_path_t *self);
 
-__export__ ret_t
+__api__ ret_t
 fs_path(fs_path_t *self, char_t const *path);
 
-__export__ ret_t
+__api__ ret_t
 fs_pathn(fs_path_t *self, char_t const *path, u16_t n);
 
-__export__ bool_t
+__api__ bool_t
 fs_path_is_abs(fs_path_t const *self);
 
-__export__ bool_t
+__api__ bool_t
 fs_path_is_rel(fs_path_t const *self);
 
-__export__ ret_t
+__api__ ret_t
 fs_path_absolute(fs_path_t *self, fs_path_t *out);
 
-__export__ ret_t
+__api__ ret_t
 fs_path_open(fs_path_t *self, fs_file_t *out, u32_t flags);
 
-__export__ ret_t
+__api__ ret_t
 fs_path_join(fs_path_t *self, fs_path_t *other);
 
 #endif /* !__UFS_PATH_H */

@@ -31,31 +31,31 @@
 
 #include "conf.h"
 
-__export__ ret_t
-fs_absolute(char_t const *path, char_t *out);
+__api__ ret_t
+fs_absolute(char_t __const *path, char_t *out);
 
-__export__ bool_t
-fs_cp(char_t const *path, char_t const *dest);
+__api__ bool_t
+fs_cp(char_t __const *path, char_t __const *dest);
 
-__export__ u16_t
+__api__ u16_t
 fs_cwd(char_t *path, u16_t n);
 
-__export__ bool_t
-fs_exists(char_t const *path);
+__api__ bool_t
+fs_exists(char_t __const *path);
 
-__export__ bool_t
-fs_ln(char_t const *path, char_t const *dest);
+__api__ bool_t
+fs_ln(char_t __const *path, char_t __const *dest);
 
-__export__ ret_t
-fs_mkdir(char_t const *path);
+__api__ ret_t
+fs_mkdir(char_t __const *path);
 
-__export__ bool_t
-fs_mv(char_t const *path, char_t const *dest);
+__api__ bool_t
+fs_mv(char_t __const *path, char_t __const *dest);
 
-__export__ bool_t
-fs_rm(char_t const *path);
+__api__ bool_t
+fs_rm(char_t __const *path);
 
-__export__ bool_t
-fs_touch(char_t const *path);
+__api__ bool_t
+fs_touch(char_t __const *path);
 
 #endif /* !__UFS_OP_H */

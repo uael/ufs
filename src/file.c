@@ -25,18 +25,45 @@
 
 #include "ufs/file.h"
 
+#if !defined O_RDONLY
+# define O_RDONLY _O_RDONLY
+# define O_WRONLY _O_WRONLY
+# define O_RDWR _O_RDWR
+# define O_APPEND _O_APPEND
+# define O_CREAT _O_CREAT
+# define O_TRUNC _O_TRUNC
+# define O_EXCL _O_EXCL
+# define O_TEXT _O_TEXT
+# define O_BINARY _O_BINARY
+# define O_RAW _O_BINARY
+# define O_TEMPORARY _O_TEMPORARY
+# define O_NOINHERIT _O_NOINHERIT
+# define O_SEQUENTIAL _O_SEQUENTIAL
+# define O_RANDOM _O_RANDOM
+#endif
+
+#if !defined S_IFMT
+# define S_IFMT _S_IFMT
+# define S_IFDIR _S_IFDIR
+# define S_IFCHR _S_IFCHR
+# define S_IFREG _S_IFREG
+# define S_IREAD _S_IREAD
+# define S_IWRITE _S_IWRITE
+# define S_IEXEC _S_IEXEC
+#endif
+
 FORCEINLINE bool_t
-fs_file_exists(fs_file_t *__restrict__ self) {
+fs_file_exists(fs_file_t *__restrict self) {
   return fs_file_opened(self);
 }
 
 FORCEINLINE bool_t
-fs_file_opened(const fs_file_t *__restrict__ self) {
+fs_file_opened(__const fs_file_t *__restrict self) {
   return (bool_t) (self && *self != FS_FD_DFT);
 }
 
 ret_t
-fs_file_open(fs_file_t *__restrict__ self, char_t const *filename,
+fs_file_open(fs_file_t *__restrict self, char_t __const *filename,
   u32_t flags) {
   if (fs_file_opened(self)) {
     return RET_SUCCESS;
@@ -75,7 +102,7 @@ fs_file_open(fs_file_t *__restrict__ self, char_t const *filename,
 }
 
 ret_t
-fs_file_close(fs_file_t *__restrict__ self) {
+fs_file_close(fs_file_t *__restrict self) {
   if (!fs_file_opened(self)) {
     return RET_FAILURE;
   }
@@ -87,12 +114,12 @@ fs_file_close(fs_file_t *__restrict__ self) {
 }
 
 FORCEINLINE ret_t
-fs_file_read(fs_file_t *__restrict__ self, char_t *buf, usize_t len, isize_t *out) {
+fs_file_read(fs_file_t *__restrict self, char_t *buf, usize_t len, isize_t *out) {
   isize_t r;
 
   if (!fs_file_opened(self) ||
 #if defined OS_WIN
-    (r = _read(*self, buf, len - 1)) == 0) {
+    (r = _read(*self, buf, (unsigned) (len - 1))) == 0) {
 #else
     (r = read(*self, buf, len)) == 0) {
 #endif
@@ -106,12 +133,12 @@ fs_file_read(fs_file_t *__restrict__ self, char_t *buf, usize_t len, isize_t *ou
 }
 
 FORCEINLINE ret_t
-fs_file_write(fs_file_t *__restrict__ self, char_t const *buf, usize_t len, isize_t *out) {
+fs_file_write(fs_file_t *__restrict self, char_t __const *buf, usize_t len, isize_t *out) {
   isize_t r;
 
   if (!fs_file_opened(self) ||
 #if defined OS_WIN
-    (r = _write(*self, buf, len)) == 0) {
+    (r = _write(*self, buf, (unsigned) len)) == 0) {
 #else
     (r = write(*self, buf, len)) == 0) {
 #endif
@@ -125,7 +152,7 @@ fs_file_write(fs_file_t *__restrict__ self, char_t const *buf, usize_t len, isiz
 }
 
 FORCEINLINE ret_t
-fs_file_seek(fs_file_t *__restrict__ self, isize_t off, fs_seek_mod_t whence,
+fs_file_seek(fs_file_t *__restrict self, isize_t off, fs_seek_mod_t whence,
   isize_t *out) {
   isize_t r;
 #if defined OS_WIN
@@ -142,7 +169,7 @@ fs_file_seek(fs_file_t *__restrict__ self, isize_t off, fs_seek_mod_t whence,
 }
 
 isize_t
-fs_file_offset(fs_file_t *__restrict__ self) {
+fs_file_offset(fs_file_t *__restrict self) {
   i64_t off;
 
   switch (fs_file_seek(self, 0, FS_SEEK_CUR, &off)) {

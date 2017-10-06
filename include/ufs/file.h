@@ -45,31 +45,31 @@ enum fs_kind {
 typedef enum fs_kind fs_kind_t;
 typedef i32_t fs_file_t;
 
-__export__ bool_t
-fs_file_exists(fs_file_t *__restrict__ self);
+__api__ bool_t
+fs_file_exists(fs_file_t *__restrict self);
 
-__export__ bool_t
-fs_file_opened(fs_file_t const *__restrict__ self);
+__api__ bool_t
+fs_file_opened(fs_file_t __const *__restrict self);
 
-__export__ ret_t
-fs_file_open(fs_file_t *__restrict__ self, char_t const *filename, u32_t flags);
+__api__ ret_t
+fs_file_open(fs_file_t *__restrict self, char_t __const *filename, u32_t flags);
 
-__export__ ret_t
-fs_file_close(fs_file_t *__restrict__ self);
+__api__ ret_t
+fs_file_close(fs_file_t *__restrict self);
 
-__export__ ret_t
-fs_file_read(fs_file_t *__restrict__ self, char_t *buf, usize_t len,
+__api__ ret_t
+fs_file_read(fs_file_t *__restrict self, char_t *buf, usize_t len,
   isize_t *out);
 
-__export__ ret_t
-fs_file_write(fs_file_t *__restrict__ self, char_t const *buf, usize_t len,
+__api__ ret_t
+fs_file_write(fs_file_t *__restrict self, char_t __const *buf, usize_t len,
   isize_t *out);
 
-__export__ ret_t
-fs_file_seek(fs_file_t *__restrict__ self, isize_t off, fs_seek_mod_t whence,
+__api__ ret_t
+fs_file_seek(fs_file_t *__restrict self, isize_t off, fs_seek_mod_t whence,
   isize_t *out);
 
-__export__ isize_t
-fs_file_offset(fs_file_t *__restrict__ self);
+__api__ isize_t
+fs_file_offset(fs_file_t *__restrict self);
 
 #endif /* !__UFS_FILE_H */
